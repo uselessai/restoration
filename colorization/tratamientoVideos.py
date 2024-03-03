@@ -148,7 +148,7 @@ def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
             "num_fotogramas": 0,
             "fps": 0,
             "size": "",
-            "cdc": ',
+            "cdc": 0,
             "optical_flow": 0,
             "restaurada": restaurada,
             "color": color,
