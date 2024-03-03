@@ -154,4 +154,9 @@ def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
             "color": color,
             "calidad": calidad
         }
+        return informacion
+    
+    except Exception as e:
+        print(f"Error al obtener información del video {url}: {e}")
+        return None
 
