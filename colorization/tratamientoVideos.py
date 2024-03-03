@@ -2,13 +2,14 @@ import os
 import cv2
 from moviepy.editor import VideoFileClip
 from pytube import YouTube
-import pafy
+
 import time
 import scenedetect
 from scenedetect import VideoManager
 from scenedetect import SceneManager
 from scenedetect.detectors import ContentDetector
 from scenedetect.scene_manager import FrameTimecode
+
 
 
 def descargar_video(url, ruta_guardado):
