@@ -15,7 +15,20 @@ def descargar_video(url, ruta_guardado):
     yt = YouTube(url)
     ys = yt.streams.get_highest_resolution()
     ys.download(ruta_guardado)
-    return os.path.join(ruta_guardado, yt.title + ".mp4")
+    
+    ruta_video = os.path.join(ruta_guardado, yt.title + ".mp4")
+
+    # Utilizar OpenCV para obtener información adicional
+    cap = cv2.VideoCapture(ruta_video)
+    duracion_segundos = cap.get(cv2.CAP_PROP_FRAME_COUNT) / cap.get(cv2.CAP_PROP_FPS)
+    resolucion = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    num_fotogramas = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    # Cerrar el objeto VideoCapture
+    cap.release()
+
+    return ruta_video, yt.title, duracion_segundos, resolucion, num_fotogramas, fps
 
 def detectar_cambios_escena_OpenCV(video_path, umbral=30):
     cap = cv2.VideoCapture(video_path)
