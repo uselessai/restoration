@@ -114,25 +114,44 @@ def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
 
 
 
-def obtener_informacion_video(url):
+def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
     try:
-        # Proporciona información básica
-        return {
-            "url": url,
-            "titulo": input("Ingresa el título del video: "),
-            "nueva": input("Es nueva (True/False): ").lower() == 'true',
-            "restaurada": input("Está restaurada (True/False): ").lower() == 'true',
-            "color": input("Es a color (True/False): ").lower() == 'true',
-            "blanco_y_negro": input("Es blanco y negro (True/False): ").lower() == 'true',
-            "calidad": input("Calidad (normal/super_calidad): "),
-            "fotogramas_por_segundo": float(input("Número de fotogramas por segundo: ")),
-            "tamano_fotograma": input("Tamaño del fotograma: "),
-            "tiempo": float(input("Duración del video en segundos: "))
-        }
-    except Exception as e:
-        print(f"Error al procesar el video {url}: {e}")
-        return None
 
-    except Exception as e:
-        print(f"Error al obtener información del video {url}: {e}")
-        return None
+
+        # Obtener información básica del video
+        titulo = ""
+        duracion_segundos = 0
+        duracion_formato = 0
+        resolucion = ""
+
+
+        cap = cv2.VideoCapture(video.getbest().url)
+        num_fotogramas = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+
+        # Calcular el tiempo medio por fotograma
+        tiempo_medio_por_fotograma = 1 / fps if fps != 0 else None
+
+        # Calcular CDC (Color Distribution Coefficient) y Optical Flow (Flujo Óptico)
+        cdc, optical_flow = calcular_cdc_optical_flow(cap)
+
+        # Cerrar el objeto de captura de video
+        cap.release()
+
+        # Crear un diccionario con la información recopilada
+        informacion = {
+            "titulo": "",
+            "duracion_segundos": 0,
+            "duracion_formato": 0,
+            "resolucion": "",
+            "num_fotogramas": 0,
+            "fps": 0,
+            "size": "",
+            "cdc": ',
+            "optical_flow": 0,
+            "restaurada": restaurada,
+            "color": color,
+            "calidad": calidad
+        }
+
