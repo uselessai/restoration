@@ -114,48 +114,24 @@ def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
 
 
 
-def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
+def obtener_informacion_video(url):
     try:
-        # Obtener el objeto de video usando la URL de YouTube
-        video = pafy.new(url)
-
-        # Obtener información básica del video
-        titulo = video.title
-        duracion_segundos = video.length
-        duracion_formato = video.duration
-        resolucion = video.getbest().resolution
-
-        # Obtener información adicional del video usando OpenCV
-        cap = cv2.VideoCapture(video.getbest().url)
-        num_fotogramas = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-
-        # Calcular el tiempo medio por fotograma
-        tiempo_medio_por_fotograma = 1 / fps if fps != 0 else None
-
-        # Cerrar el objeto de captura de video
-        cap.release()
-        cdc = 0
-        optical_flow = 0
-        # Crear un diccionario con la información recopilada
-        informacion = {
-            "titulo": titulo,
-            "duracion_segundos": duracion_segundos,
-            "duracion_formato": duracion_formato,
-            "resolucion": resolucion,
-            "num_fotogramas": num_fotogramas,
-            "fps": fps,
-            "size": size,
-            "tiempo_medio_por_fotograma": tiempo_medio_por_fotograma,
-            "cdc": cdc,
-            "optical_flow": optical_flow,
-            "restaurada": restaurada,
-            "color": color,
-            "calidad": calidad
+        # Proporciona información básica
+        return {
+            "url": url,
+            "titulo": input("Ingresa el título del video: "),
+            "nueva": input("Es nueva (True/False): ").lower() == 'true',
+            "restaurada": input("Está restaurada (True/False): ").lower() == 'true',
+            "color": input("Es a color (True/False): ").lower() == 'true',
+            "blanco_y_negro": input("Es blanco y negro (True/False): ").lower() == 'true',
+            "calidad": input("Calidad (normal/super_calidad): "),
+            "fotogramas_por_segundo": float(input("Número de fotogramas por segundo: ")),
+            "tamano_fotograma": input("Tamaño del fotograma: "),
+            "tiempo": float(input("Duración del video en segundos: "))
         }
-
-        return informacion
+    except Exception as e:
+        print(f"Error al procesar el video {url}: {e}")
+        return None
 
     except Exception as e:
         print(f"Error al obtener información del video {url}: {e}")
