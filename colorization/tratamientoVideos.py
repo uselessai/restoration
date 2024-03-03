@@ -113,37 +113,13 @@ def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
             cap.release()
 
 
-
 def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
     try:
-
-
-        # Obtener información básica del video
-        titulo = ""
-        duracion_segundos = 0
-        duracion_formato = 0
-        resolucion = ""
-
-
-        cap = cv2.VideoCapture(video.getbest().url)
-        num_fotogramas = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-
-        # Calcular el tiempo medio por fotograma
-        tiempo_medio_por_fotograma = 1 / fps if fps != 0 else None
-
-        # Calcular CDC (Color Distribution Coefficient) y Optical Flow (Flujo Óptico)
-        cdc, optical_flow = calcular_cdc_optical_flow(cap)
-
-        # Cerrar el objeto de captura de video
-        cap.release()
 
         # Crear un diccionario con la información recopilada
         informacion = {
             "titulo": "",
             "duracion_segundos": 0,
-            "duracion_formato": 0,
             "resolucion": "",
             "num_fotogramas": 0,
             "fps": 0,
@@ -159,4 +135,3 @@ def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
     except Exception as e:
         print(f"Error al obtener información del video {url}: {e}")
         return None
-
