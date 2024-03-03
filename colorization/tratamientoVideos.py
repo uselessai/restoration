@@ -118,6 +118,7 @@ def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
         # Crear un diccionario con la información recopilada
         informacion = {
             "url": url,
+            "ruta_local": "",
             "titulo": "",
             "duracion_segundos": 0,
             "resolucion": "",
