@@ -11,7 +11,6 @@ from scenedetect.detectors import ContentDetector
 from scenedetect.scene_manager import FrameTimecode
 
 
-
 def descargar_video(url, ruta_guardado):
     yt = YouTube(url)
     ys = yt.streams.get_highest_resolution()
@@ -113,12 +112,12 @@ def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
 
             cap.release()
 
-
 def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
     try:
 
         # Crear un diccionario con la información recopilada
         informacion = {
+            "url": url,
             "titulo": "",
             "duracion_segundos": 0,
             "resolucion": "",
