@@ -138,6 +138,7 @@ def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
         informacion = {
             "url": url,
             "ruta_local": "",
+            "ruta_local_escenas": "",
             "titulo": "",
             "duracion_segundos": 0,
             "resolucion": "",
@@ -148,7 +149,8 @@ def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
             "optical_flow": 0,
             "restaurada": restaurada,
             "color": color,
-            "calidad": calidad
+            "calidad": calidad,
+            "escenas": []
         }
         return informacion
 
