@@ -1,62 +1,157 @@
-# Ruta al archivo JSON
-archivo_json = '/content/videos_con_informacion.json'
+import os
+import cv2
+from moviepy.editor import VideoFileClip
+from pytube import YouTube
 
-# Leer el archivo JSON
-with open(archivo_json, 'r') as json_file:
-    videos_json = json.load(json_file)
+import time
+import scenedetect
+from scenedetect import VideoManager
+from scenedetect import SceneManager
+from scenedetect.detectors import ContentDetector
+from scenedetect.scene_manager import FrameTimecode
+
+def obtener_info_video(ruta_video):
+    # Utilizar OpenCV para obtener información adicional
+    cap = cv2.VideoCapture(ruta_video)
+
+    duracion_segundos = cap.get(cv2.CAP_PROP_FRAME_COUNT) / cap.get(cv2.CAP_PROP_FPS)
+    resolucion = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    num_fotogramas = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    # Cerrar el objeto VideoCapture
+    cap.release()
+
+    return duracion_segundos, resolucion, num_fotogramas, fps
+
+# Modifica el método descargar_video para utilizar la nueva función
+def descargar_video(url, ruta_guardado):
+    yt = YouTube(url)
+    ys = yt.streams.get_highest_resolution()
+    ys.download(ruta_guardado)
+
+    ruta_video = os.path.join(ruta_guardado, yt.title + ".mp4")
+
+    # Obtener información adicional del video
+    duracion_segundos, resolucion, num_fotogramas, fps = obtener_info_video(ruta_video)
+
+    return ruta_video, yt.title, duracion_segundos, resolucion, num_fotogramas, fps
+def detectar_cambios_escena_OpenCV(video_path, umbral=30):
+    cap = cv2.VideoCapture(video_path)
+    cambios_escena = []
+
+    _, prev_frame = cap.read()
+    prev_frame_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
+
+    frame_number = 1
+    start_frame = None
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        current_frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame_diff = cv2.absdiff(prev_frame_gray, current_frame_gray)
+        _, threshold_diff = cv2.threshold(frame_diff, umbral, 255, cv2.THRESH_BINARY)
+
+        contours, _ = cv2.findContours(threshold_diff, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        if len(contours) > 0 and start_frame is None:
+            start_frame = frame_number
+        elif len(contours) == 0 and start_frame is not None:
+            cambios_escena.append((start_frame, frame_number))
+            start_frame = None
+
+        prev_frame_gray = current_frame_gray
+        frame_number += 1
+
+    cap.release()
+    return cambios_escena
 
 
-# Obtener URLs o archivos del JSON
-urls_o_archivos = [video["ruta_local"] for video in videos_json]
+def dividir_y_guardar_escenasOpenCV(video_path, carpeta_salida):
+    clip = cv2.VideoCapture(video_path)
+    cambios_escena = detectar_cambios_escena_OpenCV(video_path)
+
+    total_escenas = len(cambios_escena)
+    print(f"Total de escenas encontradas: {total_escenas}")
+
+    for i, (start, end) in enumerate(cambios_escena):
+        subclip_start = start / clip.get(cv2.CAP_PROP_FPS)
+        subclip_end = end / clip.get(cv2.CAP_PROP_FPS)
+
+        # Verificar si el subclip_start es menor que subclip_end
+        if subclip_start < subclip_end:
+            subclip = VideoFileClip(video_path).subclip(subclip_start, subclip_end)
+            nombre_archivo = f"escena{i+1:04d}.mp4"
+            ruta_guardado = os.path.join(carpeta_salida, nombre_archivo)
+            subclip.write_videofile(ruta_guardado, codec="libx264", audio_codec="aac")
+
+            # Imprimir progreso con tiempo
+            print(f"Escena {i+1}/{total_escenas} generada - {nombre_archivo}")
+    print("Generación de escenas completada.")
 
 
-# Itera sobre las URLs o archivos
-for ruta_video_completo in urls_o_archivos:
+def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
+    for carpeta_video in carpetas_videos:
+        carpeta_video_path = os.path.join(carpeta_salida, carpeta_video)
+        carpeta_fotogramas = os.path.join(carpeta_video_path, "fotogramas")
 
-  nombre_video = os.path.splitext(os.path.basename(ruta_video_completo))[0]
-  carpeta_vid_output = os.path.join(videos_output, f"{nombre_video}")
-  os.makedirs(carpeta_vid_output, exist_ok=True)
+        # Crear la carpeta de fotogramas si no existe
+        os.makedirs(carpeta_fotogramas, exist_ok=True)
 
-  # Una vez descargado el video de Youtube genera todas sus escenas
- # !scenedetect -i "$ruta_video_completo" -o "$carpeta_vid_output" split-video
+        # Obtener la lista de archivos de video en la carpeta
+        archivos_video = [f for f in os.listdir(carpeta_video_path) if f.endswith(('.mp4', '.avi', '.mkv'))]
 
-  # Iterar sobre las escenas .mp4 para guardarlas en el json
-  archivos_en_carpeta = os.listdir(carpeta_vid_output)
-  # Filtrar solo los archivos .mp4
-  videos_mp4 = [archivo for archivo in archivos_en_carpeta if archivo.endswith(".mp4")]
-  
+        for video in archivos_video:
+            video_path = os.path.join(carpeta_video_path, video)
+            video_nombre = os.path.splitext(video)[0]
 
-  escenas = []  # Lista para almacenar las escenas
-  # Iterar sobre los archivos .mp4 en la carpeta de escenas
-  for idx, video_mp4 in enumerate(videos_mp4):
-      ruta_escena = os.path.join(carpeta_vid_output, video_mp4)
-      print (idx)
-      # Aquí puedes hacer lo que necesites con cada archivo .mp4
-      print(f"Procesando archivo: {ruta_escena}")
-      # Puedes agregar la lógica para trabajar con cada archivo .mp4 aquí
+            # Crear una subcarpeta para cada video
+            carpeta_video_fotogramas = os.path.join(carpeta_fotogramas, video_nombre)
+            os.makedirs(carpeta_video_fotogramas, exist_ok=True)
 
-      duracion_segundos, resolucion, num_fotogramas, fps = obtener_info_video(ruta_escena)
+            # Abrir el video
+            cap = cv2.VideoCapture(video_path)
 
-      # Agregar información de la escena a la lista
-      escena_actual = {
-          "id": str(idx).zfill(4),
-          "duracion_segundos": duracion_segundos,
-          "resolucion": resolucion,
-          "num_fotogramas": num_fotogramas,
-          "fps": fps,
-          "cdc": 0,
-          "fid": 0,
-          "optical_flow": 0
-      }
+            # Leer los fotogramas y guardarlos
+            frame_number = 0
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    break
 
-      escenas.append(escena_actual)
-      print (escenas)
+                # Guardar el fotograma en la subcarpeta
+                nombre_fotograma = f"{frame_number:04d}.jpg"
+                ruta_fotograma = os.path.join(carpeta_video_fotogramas, nombre_fotograma)
+                cv2.imwrite(ruta_fotograma, frame)
 
-  # Buscar el video específico en la lista por su título
-  video_objetivo = next((video for video in videos_json if video["ruta_local"] == urls_o_archivos), None)
-  # Agregar la escena actual a la lista de escenas del video objetivo
-  video_objetivo["escenas"].append(escena_actual)
+                frame_number += 1
 
-# Escribir de nuevo el archivo JSON con la información actualizada
-with open(archivo_json, 'w') as json_file:
-    json.dump(videos_json, json_file, indent=2)
+            cap.release()
+
+def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
+    try:
+
+        # Crear un diccionario con la información recopilada
+        informacion = {
+            "url": url,
+            "ruta_local": "",
+            "titulo": "",
+            "duracion_segundos": 0,
+            "resolucion": "",
+            "num_fotogramas": 0,
+            "fps": 0,
+            "size": "",
+            "cdc": 0,
+            "optical_flow": 0,
+            "restaurada": restaurada,
+            "color": color,
+            "calidad": calidad
+        }
+        return informacion
+
+    except Exception as e:
+        print(f"Error al obtener información del video {url}: {e}")
+        return None
