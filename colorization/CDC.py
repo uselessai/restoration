@@ -94,7 +94,7 @@ def calculate_cdc(input_folder, dilation=[1, 2, 4], weight=[1/3, 1/3, 1/3]):
                 mean_r += w * np.mean(JS_r_list_one)
 
             if not (np.isnan(mean_b) or np.isnan(mean_g) or np.isnan(mean_r)):
-              ruta_escena_list = folder_path
+              ruta_escena_list.append(folder_path)
               JS_b_mean_list.append(mean_b)
               JS_g_mean_list.append(mean_g)
               JS_r_mean_list.append(mean_r)
