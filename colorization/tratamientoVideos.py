@@ -96,14 +96,12 @@ def dividir_y_guardar_escenasOpenCV(video_path, carpeta_salida):
 def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
     for carpeta_video in carpetas_videos:
         carpeta_video_path = os.path.join(carpeta_salida, carpeta_video)
-        carpeta_fotogramas = os.path.join(carpeta_video_path, "fotogramas")
-
-        # Crear la carpeta de fotogramas si no existe
-        os.makedirs(carpeta_fotogramas, exist_ok=True)
+ 
 
         # Obtener la lista de archivos de video en la carpeta
-        archivos_video = [f for f in os.listdir(carpeta_video_path) if f.endswith(('.mp4', '.avi', '.mkv'))]
-
+        archivos_video = [f for f in os.listdir(carpetas_videos) if f.endswith(('.mp4', '.avi', '.mkv'))]
+        print (archivos_video)
+        print ("paso por aqi")
         for video in archivos_video:
             video_path = os.path.join(carpeta_video_path, video)
             video_nombre = os.path.splitext(video)[0]
