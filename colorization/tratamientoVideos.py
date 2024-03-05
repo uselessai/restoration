@@ -94,40 +94,40 @@ def dividir_y_guardar_escenasOpenCV(video_path, carpeta_salida):
 
 
 def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
-    for carpeta_video in carpetas_videos:
+   
     
 
-        # Obtener la lista de archivos de video en la carpeta
-        archivos_video = [f for f in os.listdir(carpetas_videos) if f.endswith(('.mp4', '.avi', '.mkv'))]
-        print (archivos_video)
-       
-        for video in archivos_video:
-            video_path = os.path.join(carpetas_videos, video)
-            video_nombre = os.path.splitext(video)[0]
+      # Obtener la lista de archivos de video en la carpeta
+      archivos_video = [f for f in os.listdir(carpetas_videos) if f.endswith(('.mp4', '.avi', '.mkv'))]
+      print (archivos_video)
+      
+      for video in archivos_video:
+          video_path = os.path.join(carpetas_videos, video)
+          video_nombre = os.path.splitext(video)[0]
 
-            # Crear una subcarpeta para cada video
-            carpeta_video_fotogramas = os.path.join(carpeta_salida, video_nombre)
-            print (carpeta_video_fotogramas)
-            os.makedirs(carpeta_video_fotogramas, exist_ok=True)
+          # Crear una subcarpeta para cada video
+          carpeta_video_fotogramas = os.path.join(carpeta_salida, video_nombre)
+          print (carpeta_video_fotogramas)
+          os.makedirs(carpeta_video_fotogramas, exist_ok=True)
 
-            # Abrir el video
-            cap = cv2.VideoCapture(video_path)
+          # Abrir el video
+          cap = cv2.VideoCapture(video_path)
 
-            # Leer los fotogramas y guardarlos
-            frame_number = 0
-            while True:
-                ret, frame = cap.read()
-                if not ret:
-                    break
+          # Leer los fotogramas y guardarlos
+          frame_number = 0
+          while True:
+              ret, frame = cap.read()
+              if not ret:
+                  break
 
-                # Guardar el fotograma en la subcarpeta
-                nombre_fotograma = f"{frame_number:04d}.jpg"
-                ruta_fotograma = os.path.join(carpeta_video_fotogramas, nombre_fotograma)
-                cv2.imwrite(ruta_fotograma, frame)
+              # Guardar el fotograma en la subcarpeta
+              nombre_fotograma = f"{frame_number:04d}.jpg"
+              ruta_fotograma = os.path.join(carpeta_video_fotogramas, nombre_fotograma)
+              cv2.imwrite(ruta_fotograma, frame)
 
-                frame_number += 1
+              frame_number += 1
 
-            cap.release()
+          cap.release()
 
 def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
     try:
