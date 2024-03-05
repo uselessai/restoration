@@ -75,7 +75,7 @@ def calculate_cdc(input_folder, dilation=[1, 2, 4], weight=[1/3, 1/3, 1/3]):
     input_folder_list = [folder for folder in input_folder_list if os.path.isdir(os.path.join(input_folder, folder))]
     #print(input_folder_list)
 
-    JS_b_mean_list, JS_g_mean_list, JS_r_mean_list = [], [], []   # record mean JS
+    JS_b_mean_list, JS_g_mean_list, JS_r_mean_list, ruta_escena_list = [], [], [], []   # record mean JS
 
     for i, folder in enumerate(input_folder_list):
 
@@ -94,10 +94,11 @@ def calculate_cdc(input_folder, dilation=[1, 2, 4], weight=[1/3, 1/3, 1/3]):
                 mean_r += w * np.mean(JS_r_list_one)
 
             if not (np.isnan(mean_b) or np.isnan(mean_g) or np.isnan(mean_r)):
-
+              ruta_escena_list = folder_path
               JS_b_mean_list.append(mean_b)
               JS_g_mean_list.append(mean_g)
               JS_r_mean_list.append(mean_r)
+
               # Buscar la cadena "Scene-" en el nombre de la carpeta
               scene_index = input_path.find("Scene-")
               if scene_index != -1:
@@ -114,5 +115,6 @@ def calculate_cdc(input_folder, dilation=[1, 2, 4], weight=[1/3, 1/3, 1/3]):
     #print("JS_b_mean_list:", JS_b_mean_list)
     #print("JS_g_mean_list:", JS_g_mean_list)
     #print("JS_r_mean_list:", JS_r_mean_list)
+
     cdc = np.mean([float(np.mean(JS_b_mean_list)), float(np.mean(JS_g_mean_list)), float(np.mean(JS_r_mean_list))])
-    return cdc
+    return cdc, JS_b_mean_list, JS_g_mean_list, JS_r_mean_list, ruta_escena_list
