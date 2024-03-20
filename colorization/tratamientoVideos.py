@@ -2,7 +2,7 @@ import os
 import cv2
 from moviepy.editor import VideoFileClip
 from pytube import YouTube
-
+import unicodedata
 import time
 import scenedetect
 from scenedetect import VideoManager
@@ -123,7 +123,9 @@ def convertir_videos_a_fotogramas(carpetas_videos, carpeta_salida):
               # Guardar el fotograma en la subcarpeta
               nombre_fotograma = f"{frame_number:04d}.jpg"
               ruta_fotograma = os.path.join(carpeta_video_fotogramas, nombre_fotograma)
-              cv2.imwrite(ruta_fotograma, frame)
+              success = cv2.imwrite(ruta_fotograma, frame)
+              if not success:
+                    print(f"Error al escribir la imagen {ruta_fotograma}")
 
               frame_number += 1
 
@@ -155,3 +157,44 @@ def obtener_informacion_video(url, restaurada=None, color=None, calidad=None):
     except Exception as e:
         print(f"Error al obtener información del video {url}: {e}")
         return None
+
+def remove_special_characters(folder_path):
+    # Obtener la lista de archivos en la carpeta
+    files = os.listdir(folder_path)
+
+    # Recorrer todos los archivos en la carpeta
+    for file_name in files:
+        # Construir la ruta completa del archivo
+        file_path = os.path.join(folder_path, file_name)
+
+        # Verificar si el archivo es un directorio
+        if os.path.isdir(file_path):
+            # Si es un directorio, llamar recursivamente a la función para procesar el contenido del directorio
+            remove_special_characters(file_path)
+        else:
+            # Obtener el nombre de archivo sin extensión y la extensión
+            file_base, file_ext = os.path.splitext(file_name)
+
+            # Eliminar los caracteres especiales y tildes del nombre de archivo base
+            normalized_base = ''.join(c for c in unicodedata.normalize('NFD', file_base) if unicodedata.category(c) != 'Mn')
+
+            # Reconstruir el nombre de archivo con el nuevo nombre base y la misma extensión
+            new_file_name = f"{normalized_base}{file_ext}"
+
+            # Construir la ruta del nuevo archivo
+            new_file_path = os.path.join(folder_path, new_file_name)
+
+            # Renombrar el archivo
+            os.rename(file_path, new_file_path)
+
+            # Imprimir el cambio realizado
+            print(f"Archivo renombrado: {file_path} -> {new_file_path}")
+
+
+
+carpeta_entrada = r'C:\Users\Lau\Downloads\videos\peores'
+carpeta_salida = r'C:\Users\Lau\Downloads\videos\peores\fotogramas'
+remove_special_characters(carpeta_entrada)
+
+# Llamar a la función para convertir el video a fotogramas
+convertir_videos_a_fotogramas(carpeta_entrada, carpeta_salida)
