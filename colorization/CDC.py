@@ -63,19 +63,25 @@ def plot_metricas_fotogramas(cdc_r, cdc_g, cdc_b, correlation_r, correlation_g, 
     # Ruta de la carpeta
     folder_path = r'C:\Users\Lau\Downloads\videos\peores\fotogramas'
 
+    
+    # Obtener la extensión del primer archivo encontrado en la carpeta
+    extension = next((os.path.splitext(nombre_archivo)[1] for nombre_archivo in os.listdir(os.path.join(folder_path, file1)) if os.path.isfile(os.path.join(os.path.join(folder_path, file1), nombre_archivo))), None)
 
-    file_name_cdc_in = f"{max_cdc_index:04d}.jpg"
-    file_name_cdc_out = f"{(max_cdc_index + dilation):04d}.jpg"
+    # Obtener la extensión del archivo
+
+    file_name_cdc_in = f"{max_cdc_index:04d}{extension}"
+    file_name_cdc_out = f"{(max_cdc_index + dilation):04d}{extension}"
     ruta_cdc_in =  os.path.join(os.path.join(folder_path, file1),file_name_cdc_in)
     ruta_cdc_out =  os.path.join(os.path.join(folder_path, file1),file_name_cdc_out)
 
-    file_name_correlation_in = f"{min_correlation_index:04d}.jpg"
-    file_name_correlation_out = f"{(min_correlation_index + dilation):04d}.jpg"
+    file_name_correlation_in = f"{min_correlation_index:04d}{extension}"
+    file_name_correlation_out = f"{(min_correlation_index + dilation):04d}{extension}"
     ruta_correlation_in =  os.path.join(os.path.join(folder_path, file1),file_name_correlation_in)
     ruta_correlation_out =  os.path.join(os.path.join(folder_path, file1),file_name_correlation_out)
 
     ax1 = axes[0]
 
+    
     # Cargar las imágenes
     imagen1 = cv2.cvtColor(cv2.imread(ruta_cdc_in), cv2.COLOR_BGR2RGB)
     imagen2 = cv2.cvtColor(cv2.imread(ruta_cdc_out), cv2.COLOR_BGR2RGB)

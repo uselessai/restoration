@@ -192,9 +192,16 @@ def remove_special_characters(folder_path):
 
 
 
-carpeta_entrada = r'C:\Users\Lau\Downloads\videos\peores'
+#carpeta_entrada = r'C:\Users\Lau\Downloads\videos\peores'
+carpeta_entrada = r'C:\Users\Lau\Downloads\videos\peores\NTIRE'
+
+
 carpeta_salida = r'C:\Users\Lau\Downloads\videos\peores\fotogramas'
 remove_special_characters(carpeta_entrada)
 
 # Llamar a la función para convertir el video a fotogramas
 convertir_videos_a_fotogramas(carpeta_entrada, carpeta_salida)
+
+
+
+
