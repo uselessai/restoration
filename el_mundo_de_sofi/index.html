@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Mundo de Sofi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>El Mundo de Sofi</h1>
+    </header>
+
+    <main>
+        <p class="instructions">Escribe la frase <strong>"El mundo de Sofi"</strong> en el cuadro de abajo.</p>
+        <input type="text" id="user-input" placeholder="Escribe aquí...">
+        <button id="check-btn">Comprobar</button>
+        <p id="result" class="result"></p>
+
+        <h2>Traza la letra</h2>
+        <div id="trace-container">
+            <canvas id="trace-canvas" width="300" height="300"></canvas>
+        </div>
+        <div id="confetti-container"></div>
+    </main>
+
+    <div class="app-links">
+        <a href="https://play.google.com" target="_blank" rel="noopener">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Google_Play_2016_icon.svg" alt="Android" class="store-logo">
+        </a>
+        <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/App_Store_iOS_icon.svg" alt="iOS" class="store-logo">
+        </a>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

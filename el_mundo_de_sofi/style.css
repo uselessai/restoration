@@ -1,0 +1,101 @@
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #fdf5e6;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header {
+    background-color: #ffb6c1;
+    padding: 20px;
+}
+
+h1 {
+    margin: 0;
+    color: #ffffff;
+}
+
+main {
+    margin-top: 50px;
+}
+
+.instructions {
+    font-size: 1.2em;
+    color: #333;
+}
+
+#user-input {
+    width: 80%;
+    max-width: 300px;
+    font-size: 1.2em;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+button {
+    font-size: 1em;
+    padding: 10px 20px;
+    background-color: #87cefa;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #00bfff;
+}
+
+.result {
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+.result.success {
+    color: #228b22;
+}
+
+.result.error {
+    color: #b22222;
+}
+
+#trace-container {
+    margin: 40px auto;
+    width: 300px;
+}
+
+#trace-canvas {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    touch-action: none;
+}
+
+#confetti-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+    from { transform: translateY(0) rotate(0); opacity: 1; }
+    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+.app-links {
+    margin-top: 30px;
+}
+
+.store-logo {
+    width: 60px;
+    margin: 0 10px;
+}
