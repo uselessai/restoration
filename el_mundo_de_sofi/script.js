@@ -5,6 +5,9 @@ const canvas = document.getElementById('trace-canvas');
 const ctx = canvas.getContext('2d');
 const confettiContainer = document.getElementById('confetti-container');
 
+// Audio context for fail sound
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
 let drawing = false;
 let wentOutside = false;
 let lastX, lastY;
@@ -25,6 +28,23 @@ function drawGuide() {
 }
 
 drawGuide();
+
+function playFailSound() {
+    const oscCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = oscCtx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = 300;
+    osc.connect(oscCtx.destination);
+    osc.start();
+    osc.stop(oscCtx.currentTime + 0.3);
+}
+
+function failDrawing() {
+    playFailSound();
+    drawing = false;
+    wentOutside = true;
+    drawGuide();
+}
 
 checkBtn.addEventListener('click', () => {
     const expected = 'El mundo de Sofi';
@@ -49,6 +69,10 @@ canvas.addEventListener('pointermove', (e) => {
     if (!drawing) return;
     const x = e.offsetX;
     const y = e.offsetY;
+    if (!ctx.isPointInStroke(letterPath, x, y)) {
+        failDrawing();
+        return;
+    }
     ctx.lineWidth = 10;
     ctx.strokeStyle = '#ff69b4';
     ctx.beginPath();
@@ -56,10 +80,6 @@ canvas.addEventListener('pointermove', (e) => {
     ctx.lineTo(x, y);
     ctx.stroke();
     [lastX, lastY] = [x, y];
-
-    if (!ctx.isPointInStroke(letterPath, x, y)) {
-        wentOutside = true;
-    }
 });
 
 function finishDrawing() {
